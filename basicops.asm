@@ -26,6 +26,9 @@ main proc
     lea dx, hw
     mov ah, 9
     int 21h
+
+    ; MOV AH, <num> 1, 2, 9
+    ; INT 21H
     
     ; load effective address
            
