@@ -1,0 +1,110 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+ARRAY DW 100 DUP(?)
+N DB ?
+SIZE DW ?
+
+PROMPT1 DB "ENTER SIZE OF ARRAY",13,10,"$"
+PROMPT2 DB 13,10,"ENTER ELEMENTS",13,10,"$"
+PROMPT3 DB 13,10,"ENTER SEARCH KEY",13,10,"$"
+NL DB 13,10,"$"
+SUCCESS DB " FOUND AT "
+FAILURE DB " NOT FOUND",13,10,"$"
+INV_SIZE DB 13,10,"INVALID SIZE","$"
+
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    MOV DX, OFFSET PROMPT1
+    MOV AH, 9
+    INT 21H
+    
+    MOV DX, 0
+
+INPUT_LOOP_N:
+    MOV AH, 1
+    INT 21H
+    CMP AL, 13
+    JE BREAK_1
+    CMP AL, 45
+    JE INVALID_SIZE
+
+    SUB AL, '0'     ; AL HAS THE INPUT AND WE SUBTRACT 0 FROM IT 
+    MOV N, AL
+    MOV AX, 10      ; MULTIPLIES WITH THIS REGISTER
+    MUL DX          ; ONLY ONE PARAMETER, PRODUCT GOES TO AX
+    MOV DX, AX      ; GET IT BACK TO DX   
+    ADD DL, N 
+    JMP INPUT_LOOP_N 
+BREAK_1:
+    MOV SIZE, DX    ; NOW SIZE HAS THE ARRAY SIZE
+    CMP SIZE, 0
+    JLE INVALID_SIZE
+    
+    MOV DX, OFFSET PROMPT2
+    MOV AH, 9
+    INT 21H
+    
+    MOV CX, SIZE   ; LOOP ITERATOR
+    LEA SI, ARRAY  ; SETTING ARRAY ADDRESS
+    MOV DX, 0
+INPUT_LOOP_ARRAY:
+    INPUT_LOOP_ENTRY:
+        MOV AH, 1
+        INT 21H
+        CMP AL, 13
+        JE BREAK_2
+        
+    
+        SUB AL, '0' 
+        MOV N, AL
+        MOV AX, 10 
+        MUL DX 
+        MOV DX, AX    
+        ADD DL, N 
+        JMP INPUT_LOOP_ENTRY 
+    BREAK_2:
+        MOV [SI], DX        ; SETTING INT VALUE IN ARRAY
+        ADD SI, 2
+        MOV DX, OFFSET NL   ; NEWLINE
+        MOV AH, 9
+        INT 21H
+        MOV DX, 0           ; RE-INIT DX FOR INPUT
+    LOOP INPUT_LOOP_ARRAY
+    
+INSERTION_SORT:
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    MOV AH, 4CH
+    INT 21H
+INVALID_SIZE:
+    MOV DX, OFFSET INV_SIZE
+    MOV AH, 9
+    INT 21H
+    MOV AH, 4CH
+    INT 21H
+    
+   
+
+MAIN ENDP
+END MAIN 
