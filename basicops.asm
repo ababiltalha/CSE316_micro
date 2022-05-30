@@ -102,6 +102,18 @@ main proc
     mov dl, b
     mov ah, 2                          
     int 21h
+
+    
+    MOV AX, @DATA
+    MOV DS, AX
+    MOV DL, 'A'
+    MOV CX, 5
+TOP:
+    MOV AH,2
+    INT 21H
+    INC DL
+    LOOP TOP
+    
           
     ; exit
     mov ah, 4ch

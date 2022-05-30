@@ -5,6 +5,7 @@
 ARRAY DW 100 DUP(?)
 N DB ?
 ARRAY_SIZE DW ?
+SORT_J DW 0
 
 PROMPT1 DB "ENTER SIZE OF ARRAY",13,10,"$"
 PROMPT2 DB 13,10,"ENTER ELEMENTS",13,10,"$"
@@ -12,7 +13,7 @@ PROMPT3 DB 13,10,"ENTER SEARCH KEY",13,10,"$"
 NL DB 13,10,"$"
 SUCCESS DB " FOUND AT "
 FAILURE DB " NOT FOUND",13,10,"$"
-INV_SIZE DB 13,10,"INVALID SIZE","$"
+INV_SIZE DB 13,10,"INVALID INPUT","$"
 
 .CODE
 MAIN PROC
@@ -41,7 +42,7 @@ INPUT_LOOP_N:
     ADD DL, N 
     JMP INPUT_LOOP_N 
 BREAK_1:
-    MOV ARRAY_SIZE, DX    ; NOW SIZE HAS THE ARRAY SIZE
+    MOV ARRAY_SIZE, DX  ; NOW SIZE HAS THE ARRAY SIZE
     CMP ARRAY_SIZE, 0
     JLE INVALID_SIZE
     
@@ -49,8 +50,8 @@ BREAK_1:
     MOV AH, 9
     INT 21H
     
-    MOV CX, ARRAY_SIZE   ; LOOP ITERATOR
-    LEA SI, ARRAY  ; SETTING ARRAY ADDRESS
+    MOV CX, ARRAY_SIZE  ; LOOP ITERATOR
+    LEA SI, ARRAY       ; SETTING ARRAY ADDRESS
     MOV DX, 0
 INPUT_LOOP_ARRAY:
     INPUT_LOOP_ENTRY:
@@ -58,8 +59,6 @@ INPUT_LOOP_ARRAY:
         INT 21H
         CMP AL, 13
         JE BREAK_2
-        
-    
         SUB AL, '0' 
         MOV N, AL
         MOV AX, 10 
@@ -75,13 +74,36 @@ INPUT_LOOP_ARRAY:
         INT 21H
         MOV DX, 0           ; RE-INIT DX FOR INPUT
     LOOP INPUT_LOOP_ARRAY
-    
+     
+    MOV CX, ARRAY_SIZE
+    DEC CX   ;;
+    LEA SI, ARRAY    
 INSERTION_SORT:
-    
-    
-    
-    
-    
+    MOV BX, SI
+    ADD SI, 2
+    MOV DX, [SI]
+    PUSH CX
+    ; INC CX    ;;
+    ; MOV CX, ARRAY_SIZE
+    ; LEA DI, ARRAY    
+    INNER_INSERTION_SORT:   
+        DEC CX    ;;
+        JZ BREAK_INNER        
+        MOV AX, [BX]
+        CMP AX, DX
+        JNG BREAK_INNER
+        
+        ADD BX, 2
+        MOV [BX], AX
+        SUB BX, 4
+        
+        JMP INNER_INSERTION_SORT 
+    BREAK_INNER:
+            
+    POP CX
+    ADD BX, 2
+    MOV [BX], DX
+    LOOP INSERTION_SORT
     
     
     
