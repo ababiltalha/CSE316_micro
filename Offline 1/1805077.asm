@@ -88,7 +88,7 @@ INSERTION_SORT:
     ; LEA DI, ARRAY    
     INNER_INSERTION_SORT:   
         DEC CX    ;;
-        JZ BREAK_INNER        
+                
         MOV AX, [BX]
         CMP AX, DX
         JNG BREAK_INNER
@@ -97,7 +97,7 @@ INSERTION_SORT:
         MOV [BX], AX
         SUB BX, 4
         
-        JMP INNER_INSERTION_SORT 
+        LOOP INNER_INSERTION_SORT 
     BREAK_INNER:
             
     POP CX
