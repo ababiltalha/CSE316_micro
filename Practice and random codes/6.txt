@@ -1,0 +1,136 @@
+SUPPOSE AX AND BX CONTAIN SIGNED NUMBERS. WRITE SOME CODE TO PUT THE BIGGEST ONE IN CX
+
+MOV CX,AX ;put AX in CX
+CMP BX,CX ;is BX bigger?
+JL EXIT	;jump to exit if CX which is actually AX is bigger	
+MOV CX, BX ;otherwise put BX in CX
+EXIT:
+
+Replace the number in AX by its absolute value
+CMP AX, 0
+JGE EXIT
+NEG AX
+EXIT:
+
+Suppose AL and BL contain extended ASCII characters. 
+Display the one that comes first in the character sequence.
+
+MOV AH,2 ;PREPARE TO DISPLAY
+CMP AL,BL
+JNBE ELSE  ;JUMP IF NOT BELOW OR EQUAL
+MOV DL,AL
+JMP EXIT
+ELSE:
+	MOV DL,BL
+EXIT:
+INT 21H
+
+If AX contains a negative number, put -1 In BX; if AX 
+contains 0, put O In BX; if AX contains a positive number, put 1 In BX.
+
+CMP AX,O 
+JL NEGATIVE 
+JE ZERO
+JG POSITIVE
+NEGATIVE: 
+	MOV BX,-1 
+JMP EXIT
+ZERO:
+	MOV BX,0
+	JMP EXIT 
+POSITIVE:
+	MOV BX, l 
+EXIT:
+
+If AL contains 1 or 3, display "o"; if AL contains 2 or 4, Display "e".
+
+CMP AL,1
+JE ODD
+CMP AL,3
+JE ODD
+
+CMP AL,2
+JE EVEN
+CMP AL,4
+JE EVEN
+
+ODD:
+	MOV DL,'o'
+	JMP DISPLAY
+EVEN:
+	MOV DL,'e'
+DISPLAY:
+MOV AH,2
+INT 21H
+
+Read a character, and if it's an uppercase letter, display it. 
+MOV AH,1
+INT 21H
+
+CMP AL, 'A'
+JNGE END_IF
+CMP AL, 'Z'
+JNLE END_IF
+MOV AH,2
+MOV DL,AL
+INT 21H
+END_IF
+
+
+Read a character. If it's "y" or "Y", display it; otherwise, terminate the program. 
+
+MOV AH,1
+INT 21H
+CMP AL, 'Y'
+JE DISPLAY
+CMP AL, 'y'
+JE DISPLAY
+JMP ELSE_
+
+DISPLAY:
+	MOV AH,2
+	MOV DL,AL
+	INT 21H
+	JMP END_IF
+ELSE_:
+	MOV AH, 4CH 
+	INT 21H
+END_IF
+
+
+
+LOOP EXAMPLES:
+Write a count-controlled loop to display a row of 80 stars.
+
+MOV CX, 80 	;NUMBER OF CHARACTER TO DISPLAY
+MOV AH, 2	;DISPLAY CHARACTER FUNCTION
+MOV DL, '*'	;CHARACTER TO DISPLAY
+JCXZ EXIT	; JUMP IF CX IS ZERO BEFORE ENTERING A LOOP
+PRINT_STAR:
+	INT 21H		;DISPLAY A STAR
+	LOOP PRINT_STAR
+EXIT:
+
+Write some code to count the number of charaters in n 
+input line.
+
+MOV DX,0 ;DX counts characters 
+MOV AH,1 ;prepare to read 
+INT 21H ;character in AL 
+;WHILE_ is used because WHILE is a reserved word
+WHILE_:				
+	CMP AL, ODH 	;CR? 
+	JE END_WHILE 	;yes, exit 
+	INC DX 		;not CR, increment count 
+	INT 21H 	;read a character 
+	JMP WHILE_	;loop back; 
+END_WHILE:
+
+
+Write some code to read characters until a blank is read.
+
+MOV AH,1 ;prepare to read 
+REPEAT:
+	INT 21H 	;character in AL
+	CMP AL, ' ' 	;a blank?
+	JNE REPEAT 	; no, keep reading
